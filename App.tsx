@@ -1,118 +1,90 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, {useState} from 'react';
+import {FlatList, Text, TextInput, TouchableOpacity, View} from 'react-native';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App: React.FC = () => {
+  const [todoItem, setTodoItem] = useState<string>('');
+  const [todoList, setTodoList] = useState<string[]>([]);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const handleChange = (e: string) => {
+    setTodoItem(e);
+  };
+  const handleAddTodo = () => {
+    // Add the todo item to the list
+    if (editIndex !== null) {
+      // Update the existing todo item
+      const updatedTodoList = [...todoList];
+      updatedTodoList[editIndex] = todoItem;
+      setTodoList(updatedTodoList);
+      setEditIndex(null); // Reset edit mode
+    } else {
+      // Add a new todo item to the list
+      setTodoList(prevList => [...prevList, todoItem]);
+    }
+    setTodoItem('');
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+  const handleDeleteTodo = (index: number) => {
+    // Delete the todo item from the list
+    setTodoList(prevList => prevList.filter((_, i) => i !== index));
+  };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+  const handleEditTodo = (index: number) => {
+    console.log(index);
+    // Delete the todo item from the list
+    setTodoItem(todoList[index]);
+    setEditIndex(index);
+  };
+  return (
+    <View className="flex-1 justify-start items-center bg-blue-500 py-10">
+      <Text className="text-white text-3xl font-bold">Todo App!</Text>
+      <View className="flex-row items-center justify-center gap-4 mt-10 px-3">
+        <TextInput
+          value={todoItem}
+          onChangeText={handleChange}
+          placeholder="Write todo tasks here"
+          className="w-10/12 h-12 bg-white px-4 py-2 rounded-md "
+        />
+        <TouchableOpacity
+          onPress={handleAddTodo}
+          className="bg-cyan-200 px-4 py-3 rounded-md">
+          <Text className="font-semibold">Add</Text>
+        </TouchableOpacity>
+      </View>
+      {todoList.length > 0 && (
+        <Text className="text-gray-200 text-2xl font-bold mt-10">
+          Todo List!
+        </Text>
+      )}
+
+      <FlatList
+        data={todoList}
+        renderItem={({item, index}) => (
+          <View className="w-10/12 flex-row items-center gap-2 mx-2">
+            <TouchableOpacity className="w-10/12  h-12 flex-row items-center justify-start gap-2 px-3 py-2 my-3 rounded-md bg-gray-300 ">
+              <Text className="" numberOfLines={1}>
+                {item}
+              </Text>
+            </TouchableOpacity>
+            <View className="flex-row items-center gap-3">
+              <TouchableOpacity
+                onPress={() => handleEditTodo(index)}
+                className="bg-gray-600 px-3 py-3 rounded-md">
+                <Text className="text-white font-semibold text-sm">Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleDeleteTodo(index)}
+                className="bg-red-600 px-2 py-3 rounded-md">
+                <Text className="text-white font-semibold text-sm">Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+        style={{marginBottom: 20}}
+      />
+    </View>
+  );
+};
 
 export default App;
