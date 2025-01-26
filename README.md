@@ -1,5 +1,3 @@
-Here's a complete `README.md` file for your Todo App repository, including a section for APK download:
-
 ````markdown
 # Todo App - React Native
 
@@ -48,12 +46,6 @@ Click [here](https://drive.google.com/file/d/1Uxf_h-ll9MH7va9d4nrhe3fyCSvJyHeV/v
    ```bash
    react-native run-ios
    ```
-
----
-
-## Screenshots
-
-(Add screenshots of your app here to give users a preview.)
 
 ---
 
